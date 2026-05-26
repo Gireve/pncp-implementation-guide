@@ -534,88 +534,371 @@ The Gireve eMIP complete implementation guide is available [here](https://www.gi
 
 ## 3.7 eMSP Services Guidelines
 
-### 3.7.1 Creation of a Contract Certificate and Making it Available in CCP for Installation in EV
+### 3.7.1 Creation of a contract certificate and making it available in CCP for installation in EV
 
-<img src="./images/media/image9.png" style="width:6.29167in;height:3.46875in" />
+![Diagram of the contract certificate creation and CCP storage workflow](images/media/image9.png)
 
-To create a Contract Certificate and make it available for installation in the target EV, the eMSP must complete (or delegate) the following actions:
+To create a Contract Certificate and make it available for installation in the target EV, the eMSP must complete or delegate the following actions:
 
 1. Generate a new key pair for the future Contract Certificate in a secure environment.
-2. Obtain a Contract Certificate associated to that key pair, issued from an eMSP SubCA2.
-3. Create a Contract Certificate Bundle (CCB). Creating the bundle requires the following additional tasks to be performed beforehand:
-   - Retrieve the OEM's Root certificates from an RCP to add them in the system trust store to validate the OEM Provisioning Certificate chains. This needs to be done regularly as new OEM Root Certificates might be available over time.
-   - Fetch the PC linked to the eMSP's customer's PCID from a PCP.
-   - Verify the validity of the retrieved PC before generating the bundle (certificate chain valid and linked to a trusted OEM Root; certificate not expired and not revoked).
+2. Obtain a Contract Certificate associated to that key pair issued from an eMSP SubCA2.
+3. Create a Contract Certificate bundle (CCB). Creating the bundle requires the following additional tasks to be performed beforehand:
+   1. Retrieve the OEM's Root certificates from an RCP to add them in the system trust store to validate the OEM Provisioning Certificate chains. This needs to be done regularly as new OEMs Root Certificates might be available over the time.
+   2. Fetching the PC linked to the eMSP's Customer's PCID from a PCP.
+   3. Verifying the validity of the retrieved PC before generating the bundle (certificate chain valid and linked to a trusted OEM Root. Certificate not expired and not revoked).
 4. Sign the Contract Certificate Bundle with the private key of a CPS leaf certificate (it becomes then a SCCB). This action requires to perform the following additional tasks beforehand:
-   - Retrieve the eMSP's Root certificates from an RCP and add them in the system trust store to validate the eMSP Contract Certificate chains from the CCBs. This needs to be done regularly as new eMSP Root Certificates might be available over time.
-   - If the entity issuing the Contract Certificate (step 2) and signing the bundle (step 4) is the same actor, this step might be optional.
-   - Generate a new key pair for the future CPS Leaf certificate in a secure environment.
-   - Obtain a Leaf CPS Certificate associated with that key pair, issued from a CPS SubCA2.
-   - Verify the validity of the CC from the CCB before signing it (certificate chain valid and linked to a trusted eMSP Root; certificate not expired and not revoked).
-5. Make the SCCB available in a CCP so it can be fetched and installed by OEMs or CPOs.
+   1. Retrieve the eMSP's Root certificates from an RCP and add them in the system trust store to validate the eMSP Contract Certificate chains from the CCBs. This needs to be done regularly as new eMSP Root Certificates might be available over the time. If the entity issuing the Contract Certificate (step 2) and signing the bundle (step 4) is the same actor, this step might be optional.
+   2. Generate a new key pair for the future CPS Leaf certificate in a secure environment.
+   3. Obtain a Leaf CPS Certificate associated with that key pair issued from a CPS SubCA2.
+   4. Verifying the validity of the CC from the CCB before signing it (certificate chain valid and linked to a trusted eMSP Root. Certificate not expired and not revoked).
+   5. Make the SCCB available in a CCP so it can be fetched and installed by OEMs or CPOs.
 
-Gireve **strongly recommends** to the eMSP the use of the [Create CC, build & sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp), also known as **"Build & Sign & Store"**, which covers all the required actions for the eMSP. This service minimizes the eMSP's implementation requirements and eliminates the need to invest in an expensive PKI infrastructure with a Certificate Manager, HSMs, CRL distribution points or OCSP responders.
+Gireve strongly recommends to the EMSP the use of the [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp), also known as **Build Sign Store**, which covers all the required actions for the EMSP. This service minimizes the EMSP's implementation requirements and eliminates the need to invest in an expensive PKI infrastructure with a Certificate Manager, HSMs, CRL distribution points or OCSP responders.
 
-Gireve provides several services from the PNCP protocol that perform one, multiple or all of these actions.
+Gireve provides several services from the PNCP protocol that perform one, multiples or all of these actions.
 
----
+#### 3.7.1.1 Creation of a contract certificate and a contract certificate bundle
 
-#### 3.7.1.1 Creation of a Contract Certificate and a Contract Certificate Bundle
+> **Note:** The actions "Generate a new Key Pair" (step 1) and "Create Contract Certificate Bundle" (step 3) must be performed by the same actor. The creation of the CCB requires the possession of the Contract Certificate private key and this private key must never circulate unencrypted and outside the specific installation workflows defined in the ISO-15118 standard.
 
-##### 3.7.1.1.1 Option 1 — Gireve Generates the CC Key Pair and the CCB
+##### 3.7.1.1.1 Option 1 – Gireve generates the CC key pair and the CCB
 
-Gireve exposes the PNCP services [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) and [Create CC, build & sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp). Both services take care of the creation of a new certificate key pair, the issuance of a contract certificate and the creation of the Contract Certificate Bundle associated to the CC and targeted PC. The second service will also sign the bundle and store it in Gireve CCP.
+Gireve exposes the PNCP services [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) and [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp). Both services take care of the creation of a new certificate key pair, the issuance of a contract certificate and the creation of the Contract Certificate Bundle associated to the CC and targeted PC. The second service will also sign the bundle and store it in Gireve PCP.
 
-The eMSP must simply specify:
-- The **eMAId** (E-Mobility Account Identifier) that will be applied to the Common Name of the issued Contract Certificate.
-- The **PCID** corresponding to the vehicle (the PCID of an EV is normally communicated by the OEM to the buyer and must be specified to the eMSP when activating Plug & Charge on an EV).
+The eMSP must simply here specify the eMAId (E-Mobility Account Identifier) that will be applied to the Common Name of the issued Contract Certificate and the PCID corresponding to the vehicle (the PCID of an EV is normally communicated by the OEM to the buyer. It must be specified to the eMSP when activating the plug and charge on an EV).
 
-The eMSP may also choose to specify a specific `certificateProfileId` that determines exactly which SubCA2 will issue the Contract Certificate, the validity period of that certificate and how the Subject DN of that certificate will be set (see [Section 3.3.1 — Certificates profiles: definition and usage](#331-certificates-profiles-definition-and-usage)). This parameter is optional. If not set, the default `certificateProfileId` configured for this operator during the technical onboarding will be used.
+The eMSP may also choose to specify a specific `certificateprofile` that determines exactly which SuBCA2 will issue the Contract Certificate, the validity period of that certificate and how the Subject DN of that certificate will be set (see [Section 3.3.1](#certificates-profiles-definition-and-usage) on certificate profiles). This parameter is optional. If not set, the default `certificateprofile` configured for this operator during the technical onboarding will be used.
 
-> ***Note:** These two services also allow the eMSP to add an optional metadata object in the request body when creating or renewing the CC and associated CCB. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.12 — Metadata usage for eMSPs](#3712-metadata-usage-for-emsps).*
+> **Note:** These two services also allow eMSP to add optional `metadata` object in the request body when creating or renewing the CC and associated CCB. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.12](#metadata-usage-for-emsps).
 
-##### 3.7.1.1.2 Option 2 — The eMSP Generates the CC Key Pair and the CCB
+##### 3.7.1.1.2 Option 2 – The eMSP generates the CC key pair and the CCB
 
-> ***Note:** The actions "Generate a new Key Pair" (step 1) and "Create Contract Certificate Bundle" (step 3) must be performed by the same actor. The creation of the CCB requires the possession of the Contract Certificate private key, and this private key must never circulate unencrypted and outside the specific installation workflows defined in the ISO-15118 standard.*
+After the creation of a key pair on its own, the eMSP can choose to obtain its Contract Certificate by using the PNCP enrolment services exposed by Gireve as detailed in [Section 3.3.2](#leaf-certificate-enrolment-and-obtention-of-linked-subcas).
 
-After the creation of a key pair on its own, the eMSP can choose to obtain its Contract Certificate by using the PNCP enrolment services exposed by Gireve, as detailed in [Section 3.3.2 — Leaf certificate enrolment and obtention of linked SubCAs](#332-leaf-certificate-enrolment-and-obtention-of-linked-subcas).
+As a reminder, when creating a new key pair for a contract certificate, the eMSP must ensure the key pair is based on `secp256r1` elliptic curve as required by the ISO-15118-2 standard. Gireve will verify this and reject the enrolment request if it is not applied.
 
-As a reminder, when creating a new key pair for a contract certificate, the eMSP must ensure the key pair is based on the **secp256r1** elliptic curve as required by the ISO-15118-2 standard. Gireve will verify this and reject the enrolment request if it is not applied.
+Remember that private keys should be protected. eMSP is bound to its MO-Root by an agreement regarding security and its MO-Root's certificate policy.
 
-Remember that private keys should be protected. The eMSP is bound to its MO-Root by an agreement regarding security and its MO-Root's certificate policy.
-
-To be able to generate the bundle, the eMSP must:
-- Be able to fetch the PC linked to the eMSP's customer's PCID from a PCP.
+To be able to generate the bundle the eMSP must:
+- Be able to fetch the PC linked to the eMSP's Customer's PCID from a PCP.
 - Retrieve the OEM's Root certificates from an RCP to be able to validate the PC.
 
-As a PCP, Gireve offers a PNCP service to retrieve a PC from a PCID. It is described in [Section 3.7.6 — Retrieve an OEM PC from a PCID](#376-retrieve-an-oem-pc-from-a-pcid).
+As a PCP, Gireve offers a PNCP service to retrieve a PC from a PCID. It is described in [Section 3.7.6](#retrieve-an-oem-pc-from-a-pcid).
 
-As an RCP, Gireve offers a PNCP service to retrieve the OEM Root Certificates. It is described in [Section 3.7.8 — Retrieve OEM Root Certificate in Gireve RCP](#378-retrieve-oem-root-certificate-in-gireve-rcp).
+As an RCP, Gireve offers a PNCP service to retrieve the OEM Root Certificates. It is described in [Section 3.7.8](#retrieve-oem-root-certificate-in-gireve-rcp).
 
 The eMSP can then create the Contract Certificate Bundle using the public key of the Provisioning Certificate.
 
-> ***Note:** Once the bundle has been generated, the eMSP must remove the unencrypted private key from its system for security reasons and delete it from any storage.*
+> **Note:** Once the bundle has been generated, the eMSP must remove the unencrypted private key from its system for security reasons and delete it from any storage.
 
-> ***Note 2:** The unencrypted private key must never be logged or traced.*
+> **Note 2:** The unencrypted private key must never be logged or traced.
 
----
+#### <span id="Signingthecontract" class="anchor"></span>3.7.1.2 Signing the contract certificate bundle
 
-#### 3.7.1.2 Signing the Contract Certificate Bundle
+Gireve also takes on the role of Certificate Provisioning Service and presents PNCP services that sign the contract certificate bundle in their process.
 
-The signing of the Contract Certificate Bundle by Gireve is included in the [Create CC, build & sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) service process. It also makes the SCCB available in Gireve's CCP.
+The signing of the Contract Certificate Bundle by Gireve is included in the [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) service process. It also makes available the SCCB into Gireve's CCP.
 
-Gireve also offers two services that take a Contract Certificate Bundle as input and return a Signed Contract Certificate Bundle in the response: [Sign a CCB and return SCCB](https://gireve-apis.stoplight.io/docs/pncp/b9rrqqo23czpv-sign-a-ccb-and-return-sccb) and [Sign a CCB and store SCCB in CCP](https://gireve-apis.stoplight.io/docs/pncp/6ed4bedec7e9d-sign-a-ccb-and-store-sccb-in-ccp). The latter also makes the SCCB available in Gireve's CCP.
+Gireve also offers two services that take a Contract Certificate Bundle as an input and return a Signed Contract Certificate Bundle in the response: [Sign a CCB and return SCCB](https://gireve-apis.stoplight.io/docs/pncp/b9rrqqo23czpv-sign-a-ccb-and-return-sccb) and [Sign a CCB and store SCCB in CCP](https://gireve-apis.stoplight.io/docs/pncp/6ed4bedec7e9d-sign-a-ccb-and-store-sccb-in-ccp). The latter one also makes available the SCCB into Gireve's CCP.
 
-These two services require specifying the whole provisioning certificate used to generate the CCB.
+These two services require to specify the whole provisioning certificate used to generate the CCB.
 
-If an eMSP doesn't use Gireve certificate enrollment services to generate its Contract Certificates, it must make its eMSP Root CA available in Gireve's RCP as described in [Section 3.7.5 — Making the eMSP Root certificate available in an RCP](#375-making-the-emsp-root-certificate-available-in-an-rcp).
+If a EMSP doesn't use Gireve Certificate enrollment services to generate its Contract Certificates, it must make its EMSP Root CA available in Gireve's RCP as described in [Section 3.7.5](#making-the-emsp-root-certificate-available-in-an-rcp).
 
-Gireve recommends using the [Create CC, build & sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) service. This is much more efficient and simpler than combining the [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) service with the two possible signing services.
-
----
+Gireve recommends using the [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp). This is much more efficient and simpler than combining the [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) service with the two possible signing services.
 
 #### 3.7.1.3 Storing the SCCB in Gireve CCP
 
 Adding an SCCB to the Gireve CCP is handled by two services:
-- [Create CC, build & sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) — which also generates the key pair, the Contract Certificate, the CCB and the SCCB beforehand.
-- [Sign a CCB and store SCCB in CCP](https://gireve-apis.stoplight.io/docs/pncp/6ed4bedec7e9d-sign-a-ccb-and-store-sccb-in-ccp) — which takes a CCB and the linked OEM provisioning certificate as input and returns an SCCB after storing it in Gireve CCP.
+
+- [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp), which also generates the key pair, the Contract Certificate, the CCB and the SCCB beforehand.
+- [Sign a CCB and store SCCB in CCP](https://gireve-apis.stoplight.io/docs/pncp/6ed4bedec7e9d-sign-a-ccb-and-store-sccb-in-ccp), which takes as an input a CCB and the linked OEM provisioning certificate and returns an SCCB after storing it in Gireve CCP.
+
+### 3.7.2 Contract certificate renewal
+
+If the eMSP delegates to Gireve the creation of the contract certificate key pairs, the issuance of the contract certificates and the creation of the Contract Certificate Bundles, it uses then either the [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) or the [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) service. To renew a contract certificate, the eMSP simply calls again one of these services and specifies the eMAId of the contract certificate it wants to renew.
+
+If the eMSP used Gireve certificates enrolment services, [Enroll a certificate PNCP](https://gireve-apis.stoplight.io/docs/pncp/afc0baf98a6e1-enroll-a-certificate-pncp) or [Enroll a certificate EST protocol](https://gireve-apis.stoplight.io/docs/pncp/7dd53d389f659-enroll-a-certificate-est-protocol), to obtain its Contract Certificates (meaning it generates itself the key pair and creates itself the bundle), it can use the same enrolment services for its certificate renewal as described in [Section 3.3.3](#renewal-of-a-leaf-certificate).
+
+> **Note:** As explained in [Section 3.7.1.1.1](#option-1-gireve-generates-the-cc-key-pair-and-the-ccb) and [Section 3.3.3](#renewal-of-a-leaf-certificate), these PNCP services allow the eMSP to include an optional `metadata` object in the request body when renewing a leaf certificate. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.3](#consultation-of-enrolled-Contract-Certificate).
+
+### 3.7.3 Consultation of enrolled Contract Certificate
+
+eMSPs may use the Certificate Consultation Services to review or export the Contract Certificates they have enrolled through the platform. These services are intended for consultation and reporting use cases and do not replace the dedicated lifecycle operations used to create, renew or revoke certificate.
+
+In addition, eMSP can associate metadata with certificates, as explained in the certificate creation [Section 3.7.1.1.1](#option-1-gireve-generates-the-cc-key-pair-and-the-ccb) and renewal [Section 3.7.2](#contract-certificate-renewal), this metadata can be provided when enrolling or renewing a certificate. It can then be used to filter, search, and export targeted subsets of certificates more efficiently.
+
+### 3.7.4 Contract certificate expiration notification
+
+Contract Certificates have a standard lifetime of 2 years. To assist eMSPs in anticipating renewals, Gireve triggers a webhook notification `emsp.contract.certificate.expiring.soon` 50 days prior to the certificate's expiration date. Operators must subscribe to this event to ensure continuous roaming authentication for their customers.
+
+To prevent spam and ensure operators receive one alert per expiring certificate, Gireve flags the certificate internally as soon as the event is successfully emitted to the notification queue. For more information about notifications, please refer to [Section 3.5](#notification-services-guidelines).
+
+### 3.7.5 Contract certificate revocation and removal from CCP
+
+<span id="Contractcertificaterevocation" class="anchor"></span>
+
+It is important to distinguish the contract certificate revocation and the contract certificate deactivation in the Gireve CCP (acting the revocation of a CC in Gireve CCP). Depending on the case, some of the PNCP services exposed by Gireve will take only one action or both actions.
+
+![Diagram of contract certificate revocation and CCP removal workflow](images/media/image10.png)
+
+#### 3.7.5.1 Option 1 – Gireve created the contract certificate and the bundle
+
+In this case, the eMSP used either the [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) or the [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) service to generate the contract certificate and the bundle.
+
+To revoke a contract certificate issued this way the eMSP must call either [Revoke a CC](https://gireve-apis.stoplight.io/docs/pncp/fxqkvxwoijkv8-revoke-a-cc) or [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id). The first service will target a specific Contract Certificate identified by the pair serial number (in decimal value) and Issuer DN, the second service will target all Contract Certificates linked to the requesting eMSP and associated to the eMAId set in the request parameter. All targeted contract certificates are first revoked by the Certificate Authority that issued them. Then the eventual SCCBs containing these now revoked contract certificates are deleted from Gireve's CCP.
+
+> **Note:** After a revocation the CA needs to update its CRL and add the new revoked certificate. This update is done periodically (every few hours up to a day). Therefore, if you revoke a certificate and immediately check the revocation status with an OCSP call or by downloading the CRL, the certificate will still be displayed as valid until the CRL is updated.
+
+> **Note 2:** Services [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/k1cwhljgcbw3z-revoke-a-certificate) and [Act revocation of a CC in CCP](https://gireve-apis.stoplight.io/docs/pncp/rkknin0bix89l-act-revocation-of-a-cc-in-ccp) are to be specifically applied on Contract Certificates issued by the generic enrolment services (see section below). If called in this case the request will be rejected.
+
+![Diagram of revocation workflow – Option 1](images/media/image11.png)
+
+#### 3.7.5.2 Option 2 – The eMSP generated the CC key pair and the certificate bundle
+
+We assume here that the eMSP used Gireve certificates enrolment services, [Enroll a certificate PNCP](https://gireve-apis.stoplight.io/docs/pncp/afc0baf98a6e1-enroll-a-certificate-pncp) or [Enroll a certificate EST protocol](https://gireve-apis.stoplight.io/docs/pncp/7dd53d389f659-enroll-a-certificate-est-protocol), to obtain its Contract Certificates. If the eMSP didn't enrolled its CC with Gireve's PKI services, Gireve then cannot revoke the CC as the revocation can only be performed by the Certificate Authority that issued the certificate.
+
+In this case, the service to use to revoke a Contract Certificate is [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/k1cwhljgcbw3z-revoke-a-certificate) as described in [Section 3.3.4](#revocation-of-a-leaf-certificate). **This service will only perform the revocation action.** The eventual SCCB in Gireve's CCP containing the revoked certificate will remain in the CCP.
+
+After revoking a contract certificate, to act this revocation, meaning to remove all the SCCB from Gireve CCP that are linked to a revoked certificate, the eMSP must call either [Act revocation of a CC in CCP](https://gireve-apis.stoplight.io/docs/pncp/rkknin0bix89l-act-revocation-of-a-cc-in-ccp) or [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id). The first service will target a specific Contract Certificate identified by the pair serial number (in decimal value) and Issuer DN, the second service will target all Contract Certificates linked to the requesting eMSP and associated to the eMAId set in the request parameter.
+
+> **Note:** The [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id) service will not also handle the revocation of the targeted CCs as described in the previous workflow where Gireve generated the CC and the bundle itself. It is essential to call the [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/rs5onohqhyyi2-revoke-a-certificate) service on that certificate beforehand.
+
+> **Note 2:** Service [Revoke a CC](https://gireve-apis.stoplight.io/docs/pncp/fxqkvxwoijkv8-revoke-a-cc) is to be specifically applied in the previous workflow where Gireve generated the CC and the bundle itself. If called in this case the request will be rejecte
+
+### 3.7.6 Making the eMSP Root certificate available in an RCP
+
+<span id="section-4" class="anchor"></span>
+
+If an eMSP manages its own Root Certificate, it must make it available in Gireve's RCP. This is necessary because the CPS and CPO need this root certificate to validate the eMSP's Contract Certificates. Without this information, these actors will reject the eMSP's Contract Certificates. This includes Gireve that acts as a CPS when the eMSP calls the PNCP signing services as described in [Section 3.7.1.2](#signing-the-contract-certificate-bundle).
+
+For all these reasons, all eMSP connected to Gireve's Trust platform are required to make their root certificates available in Gireve's RCP.
+
+The process for making available a Root Certificate in Gireve's RCP is described in [Section 3.4.1](#making-a-root-certificate-available-in-the-gireve-rcp).
+
+### 3.7.7 Retrieve an OEM PC from a PCID
+
+<span id="RetrieveanOEM" class="anchor"></span>
+
+If the eMSP generates the contract certificate bundle itself and does not delegate the task to Gireve, then the eMSP will need to retrieve the PC that is associated to its customer PCID in a PCP and to verify the validity of that PC before using it to generate the bundle.
+
+As a PCP, Gireve presents the PNCP service [Get PC by PCID](https://gireve-apis.stoplight.io/docs/pncp/yemwrjvxxsjoj-get-pc-by-pcid) that will take as param input a PCID and return the full provisioning certificate linked to that PCID including its certificate chain.
+
+> **Note:** Gireve's PCP only return active provisioning certificate. Meaning they are not expired or revoked.
+
+> **Note 2:** If multiple active PCs share the same PCID (in case of a PC renew during the transition period), Gireve PCP will send back the most recent version of the PC.
+
+### 3.7.8 Check an OEM PC from a PCID
+
+If an eMSP delegates the creation of the contract certificate and bundle to Gireve, they may first want to verify whether the PCID provided by their customer is valid and associated with a PC in Gireve's PCP.
+
+To facilitate this, Gireve, as a PCP, offers the PNCP service [Check a PCID in PCP](https://gireve-apis.stoplight.io/docs/pncp/), a streamlined and faster alternative to [Get PC by PCID](https://gireve-apis.stoplight.io/docs/pncp/yemwrjvxxsjoj-get-pc-by-pcid). This service takes a PCID as input and returns confirmation if the PCID is valid and linked to a PC in Gireve's PCP; otherwise, it provides an error response.
+
+### 3.7.9 Retrieve OEM Root Certificate in Gireve RCP
+
+<span id="RetrieveOEMRoot" class="anchor"></span>
+
+If the eMSP generates the contract certificate bundle itself and does not delegate the task to Gireve, then the eMSP will need to retrieve the PC that is associated to its customer PCID in a PCP and verify the validity of that PC before using it to generate the bundle.
+
+To verify the validity of the PC, the eMSP must retrieve the OEM Root Certificate from Gireve RCP like Gireve's one.
+
+The service to fetch Root Certificates from Gireve RCP is described in [Section 3.4.2](#retrieving-root-certificates-from-the-gireve-rcp).
+
+### 3.7.10 Be notified if SCCB is removed or retrieved from Gireve CCP
+
+As explained in [Section 3.5](#notification-services-guidelines), the eMSP can receive webhook notifications about the following events related to their SCCBs:
+
+- `emsp.provisionning.certificate.removed`
+- `emsp.provisionning.certificate.revoked`
+- `emsp.provisionning.certificate.updated`
+- `emsp.contract.certificate.delivered`
+
+The first three events indicate that the SCCB has been removed from the Gireve CCP due to the OEM deleting, revoking, or updating the Provisioning Certificate associated with the Contract Certificate.
+
+In such cases, if the Contract Certificate has not yet been installed in the vehicle, the eMSP must regenerate the data using the new Provisioning Certificate.
+
+The last event notifies the eMSP that one of their SCCBs has been retrieved by an OEM or a CPO for Contract Certificate installation in the EV. However, retrieval does not guarantee that the installation was successfully completed afterward.
+
+### 3.7.11 Manage roaming authentication workflow with eMAIds
+
+Gireve supports eMIP and OCPI roaming protocols. Roaming authentication with eMAId uses the same workflows and web services as classic RFID token authentication.
+
+End users — the eMSP customers — are identified in the eMSP's information system, which assigns them an authentication media that can be:
+
+- An RFID badge carrying a number called RFID-UID for classic recharging.
+- A digital certificate — the Contract Certificate — to be installed in the vehicle for Plug&Charge. This certificate carries an identifier called eMAID (E-Mobility Account Identifier). In terms of systems, these identifiers are contained in objects called "authentication data" in eMIP and "tokens" in OCPI.
+
+#### 3.7.11.1 Manage roaming authentication workflow with eMAIds in OCPI
+
+In OCPI, real-time authorization requests are processed via the [POST Token authorize](https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_tokens.md#222-post-method) flow between Gireve Roaming platform and the eMSP.
+
+In all OCPI token services, tokens for Plug&Charge contain the eMAID value in the `authid` field and must be associated with the **OTHER** type.
+
+The OCPI protocol description for 2.1.1 version is available [here](https://github.com/ocpi/ocpi/tree/release-2.1.1-bugfixes) and Gireve OCPI implementation guide is available [here](https://github.com/CNX-GIREVE/GIREVE_Tech_OCPI_V2.1.1).
+
+#### 3.7.11.2 Manage roaming authentication workflow with eMAIds in eMIP
+
+In eMIP, real-time authorization requests are processed by `eMIPFromIOPGetServiceAuthorisation` between the Gireve Roaming platform and the eMSP.
+
+In all eMIP authentication data services, authentication data for Plug&Charge contain the eMAID value in the `userId` field and must be associated with the **EMP-SPEC** `userIdType`.
+
+Gireve eMIP complete implementation guide is available [here](https://www.gireve.com/wp-content/uploads/2022/09/Gireve_Tech_eMIP-V0.7.4_ProtocolDescription_1.0.14-en.pdf).
+
+## 3.8 OEM services guidelines
+
+### 3.8.1 Installation of all necessary certificates in the EV
+
+#### 3.8.1.1 Obtain a PC certificate and its linked SubCAs
+
+The services for creating a Provisioning Certificate and retrieving its associated SubCAs are described in [Section 3.3.2](#leaf-certificate-enrolment-and-obtention-of-linked-subcas) of this document.
+
+As stated there, it is important to note that the OEM must include the associated SubCAs along with the Provisioning Certificate when making it available in a PCP to allow the PCP to validate the PC before integrating it, and later for the eMSP to validate the PC again before using it in a Contract Certificate Bundle.
+
+#### 3.8.1.2 Retrieve the list of V2G Root certificates from Gireve RCP
+
+The OEM needs to retrieve and install in their EV's trust store the V2G Root CAs. This is necessary so the vehicle can validate:
+
+- The SECC certificate chain when the EV is connected to the charging point.
+- The CPS certificate chain in the SCCB before installing a contract certificate.
+
+As some V2G Root CAs might be added over time in the RCP, the OEM may call the RCP regularly to update the trust store of their EVs and ensure their full compatibility with the actors of the Plug&Charge ecosystem.
+
+The service to retrieve V2G Root certificates is [Get RootCA certificates](https://gireve-apis.stoplight.io/docs/pncp/branches/main/p9ym7t2gvcd8e-get-root-ca-certificates) as described in [Section 3.4.2](#retrieving-root-certificates-from-the-gireve-rcp).
+
+#### 3.8.1.3 Install a contract certificate in the EV
+
+There are two workflows for installing a contract certificate in a vehicle: installation via the CPO and installation via the OEM. Here, we focus on the installation of contract certificates by OEMs.
+
+Gireve presents two PNCP services enabling OEMs to retrieve the Signed Contract Certificates Bundles (SCCB) which can be transmitted to the vehicle for Contract Certificate installation:
+
+- [Get SCCBs by Certificate-Installation-Request](https://gireve-apis.stoplight.io/docs/pncp/m3c3u5t2098hj-get-scc-bs-by-certificate-installation-request)
+- [Get SCCBs linked to PCID](https://gireve-apis.stoplight.io/docs/pncp/ke5ca08wey2mu-get-scc-bs-linked-to-pcid)
+
+##### Option 1: Using the Get SCCBs by Certificate-Installation-Request service
+
+[Get SCCBs by Certificate-Installation-Request](https://gireve-apis.stoplight.io/docs/pncp/m3c3u5t2098hj-get-scc-bs-by-certificate-installation-request) is a service also used by CPOs to install a contract certificate in an EV. It retrieves the SCCBs associated to a `CertificateInstallationRequest` emitted by the EV. The SCCBs are returned in an ISO-15118 `CertificateInstallationResponse` format, in EXI and Base64 encoded. A detailed explanation of this service can be found in [Section 3.5.3](#install-the-contract-certificate-in-the-vehicle).
+
+##### Option 2: Using the Get SCCBs linked to PCID service
+
+An OEM can only pull the SCCBs linked to its own Provisioning Certificates from Gireve's CCP.
+
+[Get SCCBs linked to PCID](https://gireve-apis.stoplight.io/docs/pncp/ke5ca08wey2mu-get-scc-bs-linked-to-pcid) is an OEM-only service. It retrieves the SCCBs associated with a PCID. The format of the SCCBs returned in the response can be selected and can be in JSON, in EXI or both.
+
+**Selection of the Format:** The selection of the return format of the SCCB is done with the request query parameter `sccb_format` that can take the following values:
+
+- `sccb_format=JSON` — This is the default value, meaning if the parameter is not present in the request, this format will be considered. With this configuration the SCCBs are returned in JSON in the response object `signed_contract_certificate_bundle`.
+- `sccb_format=EXI` — With this configuration the SCCBs are returned in the response string `certificate_installation_res` in EXI format and Base64 encoded.
+- `sccb_format=ALL` — With this configuration, each SCCB will be returned in EXI in the response string `certificate_installation_res` and in JSON in the response object `signed_contract_certificate_bundle`.
+
+**Selection of a specific PC:** The PCID set as input parameter targets most of the time one PC. However, particularly in the case of a PC renewal, a PCID may target more than one active PC. For this reason, optional parameters `serial_number` (decimal format) and `issuer_dn` can also be set to ensure that only the SCCBs associated with a particular PC are pulled.
+
+**Selection of a SCCB:** All returned SCCBs are paired with an `owner_operator` that identifies the eMSP managing the contract certificate using country code and party id (emi3 operator ID) pair.
+
+### 3.8.2 PC certificate lifecycle management
+
+#### 3.8.2.1 PC certificate renewal
+
+The same enrolment services used to generate a PC can be used for a PC renewal (see [Section 3.3.3](#renewal-of-a-leaf-certificate)).
+
+It is important to note that the renewal of a PC will not replace the old PC in Gireve's PCP. The update of a PC in Gireve PCP is performed by another service as described in [Section 3.8.2](#pc-certificate-lifecyle-management).
+
+#### 3.8.2.2 PC certificate expiration notification
+
+Provisioning Certificates have a long lifetime (typically 5 years). To help OEMs manage this lifecycle without service interruption, Gireve issues an early warning webhook notification `oem.provisionning.certificate.expiring.soon` 180 days before expiration. Upon receiving this event, OEMs should schedule the generation and provisioning of a new PC.
+
+To prevent spam and ensure operators receive one alert per expiring certificate, Gireve flags the certificate internally as soon as the event is successfully emitted to the notification queue. For more information about notifications, please refer to [Section 3.5](#notification-services-guidelines) of this document.
+
+#### 3.8.2.3 PC certificate revocation
+
+Please refer to [Section 3.3.4](#revocation-of-a-leaf-certificate) of this document.
+
+It is also important to note that a PC revocation will not automatically remove that PC from Gireve PCP nor deactivate the SCCBs linked to this PC's PCID. To do that, another action needs to be performed by the OEM: acting the revocation of the PC. This is detailed in [Section 3.7.3.3](#act-the-revocation-of-a-provisioning-certificate-in-gireve-pcp).
+
+#### 3.8.2.4 Consultation of enrolled Provisioning Certificate
+
+OEMs may use the Certificate Consultation Services to review or export the Provisioning Certificates they have enrolled through the platform. These services provide a self-service view of enrolled certificate data and can support operational follow-up or audit preparation.
+
+#### 3.8.2.5 Classification of PC data with Metadata
+
+OEMs may use metadata to classify the PC certificates they enroll through the platform according to their own operational criteria. This metadata can then be reused in [Certificate Consultation Services](#certificate-consultation-services) to find or export a targeted subset of certificates more easily.
+
+### 3.8.3 Provision and administration of PCs in Gireve pools
+
+#### 3.8.3.1 Making a provisioning certificate available in Gireve PCP
+
+The service to make a provisioning certificate available in Gireve's PCP is [Add a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/wjijwh6psp6xl-add-a-pc-in-pcp).
+
+The OEM must include in the request:
+
+- The OEM leaf Provisioning Certificate
+- The SubCAs (intermediate certificates)
+- The ISO-15118 version
+- The list of V2G Root certificates that are trusted by the EV
+
+> **Note:** The parameter `oldpcid` has to be specified only for updating a PC already included in Gireve PCP. The explanations on that process are detailed in the next section. We consider here that this parameter is not set by the requester.
+
+The Provisioning Certificate and the SubCAs must be passed in Base64 PEM format without headers or line breaks. The SubCAs need to be ordered in the list from lowest certificate authority to highest certificate authority.
+
+Gireve currently supports ISO 15118-2 certificates. The value to set in the `iso15118version` parameter is `urn:iso:15118:2:2013:MsgDef`.
+
+The parameter `v2grootcakeyidentifierlist` contains the list of V2G Root Certificates trusted by the EV. The V2G Root CAs are identified by their `serialid` in decimal format and `issuerdn` equals to the subject since Root CAs are self-issued.
+
+When Gireve receives an [Add a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/wjijwh6psp6xl-add-a-pc-in-pcp) request from the OEM, it will first validate the provisioning certificate — verifying that the certificate chain is associated to a trusted OEM Root CA and that the chain is valid (including expiration and revocation controls). Therefore, if the OEM has not communicated its OEM Root CA to Gireve in advance, all PCs from this OEM will be rejected. To do so, please see [Section 3.8.4](#make-an-oem-root-available-in-gireve-rcp).
+
+> As specified in Section 10 of the VDE-AR-E 2802-100-1:2019-12 document, the PCID (common name of the PC) must begin with the OEM's World Manufacturer Identifier (WMI) code.
+>
+> When Gireve receives a PC from an OEM, it will verify that the WMI in the PCID exists and is correctly associated with the OEM submitting the PC. If this verification fails, the PC will be rejected.
+>
+> Additionally, if the request concerns the addition of a new PC (`old_pcid` is not provided) and the PCID of the new PC already matches an existing PC in Gireve's PCP, the request will also be rejected.
+
+#### 3.8.3.2 Updating a provisioning certificate in Gireve PCP
+
+Updating a PC in the Gireve PCP is also done with the [Add a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/wjijwh6psp6xl-add-a-pc-in-pcp) service. The difference with an insert is the use of the `oldpcid` property in the request body. In this case, all validity checks on the PC are also applied (verification of the chain, expiration and revocation).
+
+Gireve supports the following cases:
+
+- Updating a PC with a new version with the same PCID (`oldpcid` and new `pcid` are equal and correspond to a PC in Gireve's PCP).
+- Update of a PC in the PCP by a new version with a different PCID (`oldpcid` corresponding to a PC in Gireve's PCP and new PCID not yet referenced in Gireve's PCP).
+
+Gireve rejects the following case:
+
+- Updating a PC in Gireve's PCP with a new version with a different PCID that also corresponds to an existing PC (different `oldpcid` and new PCID, new PCID already referenced in Gireve's PCP).
+
+#### 3.8.3.3 Act the revocation of a provisioning certificate in Gireve PCP
+
+<span id="Acttherevocation" class="anchor"></span>
+
+After revoking an OEM Provisioning Certificate, the OEM must remove that PC from Gireve PCP and deactivate the SCCBs linked to this PC's PCID in Gireve CCP. This process is called "Acting the revocation of a Provisioning Certificate". To do so, the OEM must call the service [Act revocation of a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/9631ac36e5e6a-act-revocation-of-a-pc-in-pcp).
+
+This service will target the Provisioning Certificate by identifying it with the serial number (in decimal value) and Issuer DN set in the request.
+
+> **Note:** Gireve does not check the revocation status of the Provisioning Certificate before performing the actions in the [Act revocation of a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/9631ac36e5e6a-act-revocation-of-a-pc-in-pcp) service. If the OEM has not revoked the Provisioning Certificate before and calls, the PC will be removed from Gireve PCP and the linked SCCBs will be deactivated from Gireve CCP anyway.
+
+#### 3.8.3.4 Removing a provisioning certificate in Gireve PCP
+
+The [Delete a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/2dze978qcx6ao-delete-a-pc-in-pcp) service enables an OEM to remove a Provisioning Certificate from Gireve's PCP. An OEM can only delete its own Provisioning Certificates.
+
+Furthermore, the deletion of a Provisioning Certificate in Gireve's PCP with [Delete a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/2dze978qcx6ao-delete-a-pc-in-pcp) will deactivate the eventual SCCBs associated with that Provisioning Certificate in Gireve's CCP.
+
+The PCID set as input parameter targets which PC to remove from Gireve PCP. Most of the time, a PCID targets exactly one PC. However, particularly in the case of a PC renewal, a PCID may target more than one active PC. For this reason, optional parameters `serial_number` (decimal format) and `issuer_dn` can also be set to ensure targeting exactly the right PC.
+
+> **Note:** If only the PCID is set as an input parameter and that PCID matches multiple valid PCs associated with that operator, all targeted PCs will be deleted from Gireve PCP.
+
+### 3.8.4 Make an OEM Root available in Gireve RCP
+
+<span id="MakeanOEM" class="anchor"></span>
+
+If an OEM manages its own OEM Root Certificate, it must make it available in Gireve's RCP. This is necessary because the PCP and eMSP need this root certificate to validate the OEM's PCs. Without this information, these actors will reject the OEM's PC. This includes Gireve as a PCP and as an eMSP delegate.
+
+For all these reasons, all OEMs connected to Gireve's Trust platform are required to make their root certificates available in Gireve's RCP. The process for making a Root Certificate available in Gireve's RCP is described in [Section 3.4.1](#making-a-root-certificate-available-in-the-gireve-rcp).
+
+### 3.8.5 Be notified if SCCB linked to OEM's PC is added or removed from Gireve CCP
+
+As detailed in [Section 3.5](#notification-services-guidelines), the OEMs can receive webhook notifications about the following events related to their EVs:
+
+- `oem.contract.certificate.available`
+- `oem.contract.certificate.revoked`
+
+The first event indicates that an SCCB associated with a Provisioning Certificate for the OEM's EVs has been added to Gireve CCP and is ready for installation.
+
+The second event notifies the OEM that the Contract Certificate linked to a Provisioning Certificate has been revoked. If this certificate has already been installed in an EV, the OEM must remove it.
