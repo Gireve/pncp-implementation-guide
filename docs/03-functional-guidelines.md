@@ -644,6 +644,8 @@ It is important to distinguish the contract certificate revocation and the contr
 
 #### 3.7.5.1 Option 1 – Gireve created the contract certificate and the bundle
 
+![Diagram of revocation workflow – Option 1](images/media/image11.png)
+
 In this case, the eMSP used either the [Create CC, build sign the CCB and store in CCP](https://gireve-apis.stoplight.io/docs/pncp/yuu57zepf5oaf-create-cc-build-and-sign-the-ccb-and-store-in-ccp) or the [Create a CC and build CCB](https://gireve-apis.stoplight.io/docs/pncp/wstbyvxtxtnuy-create-a-cc-and-build-ccb) service to generate the contract certificate and the bundle.
 
 To revoke a contract certificate issued this way the eMSP must call either [Revoke a CC](https://gireve-apis.stoplight.io/docs/pncp/fxqkvxwoijkv8-revoke-a-cc) or [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id). The first service will target a specific Contract Certificate identified by the pair serial number (in decimal value) and Issuer DN, the second service will target all Contract Certificates linked to the requesting eMSP and associated to the eMAId set in the request parameter. All targeted contract certificates are first revoked by the Certificate Authority that issued them. Then the eventual SCCBs containing these now revoked contract certificates are deleted from Gireve's CCP.
@@ -652,9 +654,9 @@ To revoke a contract certificate issued this way the eMSP must call either [Revo
 
 > **Note 2:** Services [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/k1cwhljgcbw3z-revoke-a-certificate) and [Act revocation of a CC in CCP](https://gireve-apis.stoplight.io/docs/pncp/rkknin0bix89l-act-revocation-of-a-cc-in-ccp) are to be specifically applied on Contract Certificates issued by the generic enrolment services (see section below). If called in this case the request will be rejected.
 
-![Diagram of revocation workflow – Option 1](images/media/image11.png)
-
 #### 3.7.5.2 Option 2 – The eMSP generated the CC key pair and the certificate bundle
+
+![Diagram of revocation workflow – Option 2](images/media/image12.png)
 
 We assume here that the eMSP used Gireve certificates enrolment services, [Enroll a certificate PNCP](https://gireve-apis.stoplight.io/docs/pncp/afc0baf98a6e1-enroll-a-certificate-pncp) or [Enroll a certificate EST protocol](https://gireve-apis.stoplight.io/docs/pncp/7dd53d389f659-enroll-a-certificate-est-protocol), to obtain its Contract Certificates. If the eMSP didn't enrolled its CC with Gireve's PKI services, Gireve then cannot revoke the CC as the revocation can only be performed by the Certificate Authority that issued the certificate.
 
@@ -765,6 +767,8 @@ As some V2G Root CAs might be added over time in the RCP, the OEM may call the R
 
 The service to retrieve V2G Root certificates is [Get RootCA certificates](https://gireve-apis.stoplight.io/docs/pncp/branches/main/p9ym7t2gvcd8e-get-root-ca-certificates) as described in [Section 3.4.2](#retrieving-root-certificates-from-the-gireve-rcp).
 
+> To be notified if a V2G Root Certificate is made available or removed from Gireve RCP, the OEM should subscribe to the RCP notifications as described in Section 3.4.3.
+
 #### 3.8.1.3 Install a contract certificate in the EV
 
 There are two workflows for installing a contract certificate in a vehicle: installation via the CPO and installation via the OEM. Here, we focus on the installation of contract certificates by OEMs.
@@ -773,6 +777,8 @@ Gireve presents two PNCP services enabling OEMs to retrieve the Signed Contract 
 
 - [Get SCCBs by Certificate-Installation-Request](https://gireve-apis.stoplight.io/docs/pncp/m3c3u5t2098hj-get-scc-bs-by-certificate-installation-request)
 - [Get SCCBs linked to PCID](https://gireve-apis.stoplight.io/docs/pncp/ke5ca08wey2mu-get-scc-bs-linked-to-pcid)
+
+![table example](./images/media/image13.png)
 
 ##### Option 1: Using the Get SCCBs by Certificate-Installation-Request service
 
