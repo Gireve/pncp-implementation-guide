@@ -4,20 +4,24 @@
 
 #### 5.1.1 ISO-15118 and the data link between electric vehicle and charging station
 
-ISO-15118 *"Road vehicles -- Vehicle to grid communication interface"* is an international standard defining a vehicle to grid (V2G) communication interface for bi-directional charging/discharging of electric vehicles. The standard provides a Plug Charge feature used by some electric vehicle networks.[^1]
+*"ISO-15118 Road vehicles -- Vehicle to grid communication interface" is an international standard defining a vehicle to grid (V2G) communication interface for bi-directional charging/discharging of electric vehicles. The standard provides a Plug Charge feature used by some electric vehicle networks.[^1]*
 
-The standard describes a secure connection between electric vehicles and charging stations. This V2G-Datalink has been designed to provide the messages and data exchanges needed to implement several use cases, including Charging Process, Authentication and authorization, and Smart-charging and V2G.
+The standard describes a secure connection between electric vehicles and charging stations. This V2G-Datalink has been designed to provide the messages and data exchanges needed to implement several use cases, including "Charging Process", "Authentication and authorization", and "Smart-charging and V2G".
 
 ![ISO-15118 overview](./images/media/image18.png)
 
-This document is focused on the establishment of the V2G-Datalink and the PlugCharge authentication and authorization use-cases. There are two versions of ISO-15118: the -2 released in 2014 and the -20 released in 2022. This document is based on the -2 version but the main differences of -20 are described and highlighted.
+This document is focused on the establishment of the "V2G-Datalink" and the "Plug&Charge authentication and authorization" use-cases.
+There are two versions of ISO-15118: the "-2" released in 2014 and the "-20" released in 2022. This document is based on the "-2" version but the main differences of "-20" are described and highlighted.
 
-The V2G-Datalink uses TLS[^2] protocol to establish a secure IT communication. This connection is secured by an authentication of the parties involved, based on X509 certificates:
+The "V2G-Datalink" uses "TLS"[^2] protocol to establish a secure IT communication. This connection is secured by an authentication of the parties involved, based on X509 certificates:
 
-- **The vehicle authenticates the charging-station:** The charging-station presents its certificate, and the vehicle verifies it to ensure it can trust the charging station. This certificate is named Charging Station Certificate, or Charging Point Certificate, or SECC Certificate.
-- **In ISO-15118-20 only, the authentication is mutual, and the charging station also authenticates the vehicle:** The vehicle presents its certificate, and the charging-station verifies it and checks whether it can trust the vehicle. Please note that, for this feature, the vehicle presents a specific x509 certificate which is not the Provisioning Certificate but a dedicated one. In this document, we will refer to this certificate as the Vehicle certificate.
+- The vehicle authenticates the charging-station: The charging-station presents its certificate, and the vehicle verifies it to ensure it can trust the charging station. This certificate is named "**Charging Station Certificate**", or "**Charging Point Certificate**", or "**SECC Certificate**".
+- In ISO-15118-20 only, the authentication is mutual, and the charging station also authenticates the vehicle: The vehicle presents its certificate, and the charging-station verifies it and checks whether it can trust the vehicle. Please note that, for this feature, the vehicle presents a specific x509 certificate which is not the "**Provisioning Certificate**" but a dedicated one. In this document, we will refer to this certificate as the "**Vehicle certificate**".
 
 If this TLS connection fails, for reasons related to the certificate or for any other reason, no ISO-15118 functions can be activated, and use cases will stop. The Plug Charge system will not work.
+
+[^1]: Wikipedia — [https://en.wikipedia.org/wiki/ISO_15118](https://en.wikipedia.org/wiki/ISO_15118)
+[^2]: TLS stands for Transport Layer Security, which is a cryptographic protocol designed to provide communications security over a computer network. [Wikipedia](https://en.wikipedia.org/wiki/Transport_Layer_Security)
 
 #### 5.1.2 Plug Charge feature
 
@@ -27,10 +31,11 @@ Plug Charge is based on two principles:
 
 - The user subscribes to an eMobility Service Provider (eMSP) which will pay the charging session to the Charging Point Operator (CPO). Authenticating the user ultimately means authenticating the relation between the user and his eMSP. This relation is identified by an identifier called the eMobility Account Identifier (eMAId).
 - The vehicle has a X509 certificate that authenticates the relation between the user and its eMSP. This certificate is called the Contract Certificate. When the vehicle is plugged to the charging station and after the V2G-Datalink has been established, it presents this Contract Certificate to the Charging Station, and its CPO will:
-  - Authenticate the eMSP-user contract, by verifying the Contract Certificate and ensuring that it is trustworthy.
-  - Perform the authorization process, based on the eMAId contained in the certificate.
+  - **Authenticate** the eMSP-user contract, by verifying the Contract Certificate and ensuring that it is trustworthy.
+  - Perform the **authorization** process, based on the eMAId contained in the certificate.
 
-Please note that there are two different steps: the authentication is a process based on cryptography and PKI, and authorization is an e-mobility process. The charging session will only start if both authentication and authorization are successful.
+Please note that there are two different steps: the **authentication** is a process based on cryptography and PKI, and **authorization** is an e-mobility process. 
+The charging session will only start if both authentication and authorization are successful.
 
 #### 5.1.3 ISO-15118 and Plug Charge ecosystem
 
@@ -46,27 +51,24 @@ The generation of the Contract Certificate is more complex as the initiative and
 
 The principal steps in this process are as follows:
 
-- The OEM generates the Provisioning Certificate of each vehicle.
-- A transmission mechanism, named Provisioning Certificate Pool, makes the Provisioning Certificate available for the eMSP.
-- The eMSP generates the Contract Certificate and packages it in a Signed Contract Certificate Bundle.
-- A transmission mechanism, named Contract Certificate Pool, makes the Contract Certificate available to the CPO or OEM for its installation in the vehicle using:
-  - the CPO → Charging Station → Vehicle path. Or
-  - the OEM-back-end → Vehicle path.
+- The OEM generates the "Provisioning Certificate" of each vehicle.
+- A transmission mechanism, named "Provisioning Certificate Pool", makes the "Provisioning Certificate" available for the eMSP.
+- The eMSP generates the "Contract Certificate" and packages it in a Signed "Contract Certificate Bundle".
+- A transmission mechanism, named "Contract Certificate Pool", makes the "Contract Certificate" available to the CPO or OEM for its installation in the vehicle using:
+  - the "CPO → Charging Station → Vehicle" path. Or
+  - the "OEM-back-end → Vehicle" path.
 
 ![ISO-15118 and Plug Charge ecosystem](./images/media/image19.png)
 
-All these actors, transmission means, and processes form the ISO-15118 and Plug Charge ecosystem.
+All these actors, transmission means, and processes form the "ISO-15118 and Plug Charge ecosystem".
 
 #### 5.1.4 ISO-15118 Certificates — Summary
 
-The following table summarizes the main characteristics of the certificates involved in ISO-15118 and PlugCharge.
+The following table summarizes the main characteristics of the certificates involved in ISO-15118 and Plug&Charge.
 
 ![ISO-15118 Certificates Summary table](./images/media/image20.png)
 
 *Table 1 — ISO-15118 Certificates — Summary*
-
-[^1]: Wikipedia — [https://en.wikipedia.org/wiki/ISO_15118](https://en.wikipedia.org/wiki/ISO_15118)
-[^2]: TLS stands for Transport Layer Security, which is a cryptographic protocol designed to provide communications security over a computer network. [Wikipedia](https://en.wikipedia.org/wiki/Transport_Layer_Security)
 
 ### 5.2 Roles and actors
 
@@ -149,19 +151,20 @@ The main use cases are as follows:
 An ISO-15118 Plug Charge ready vehicle must have some specific hardware and software components. These requirements and actions are entirely internal to the car maker. The specific actions involving the fact that the vehicle must comply with ISO-15118 and Plug Charge, on which we will focus in this document, are related to the PKI and Plug Charge ecosystem:
 
 - Install the relevant V2G root-certificates in the vehicle.
-- Generate the provisioning certificate of the vehicle and make it available.
+- Generate the provisioning certificate of the vehicle and make it available
 
 ![OEM produces ISO-15118-ready vehicle](./images/media/image23.png)
+*Figure 5 - The OEM/Car-maker produces an ISO-15118-ready vehicle*
 
 The car-maker backend system:
 
-- Must generate the Provisioning Certificate Identifier (PCID) in compliance with the standard definition (see step 1.0 on illustration).
-- Must transmit to the vehicle the relevant V2G root-CA certificates, to be installed in it (see step 1.1). This could be done using a V2G-Root-CA-TrustList or individually, certificate per certificate.
+- Must generate the Provisioning Certificate Identifier (PCiD) in compliance with the standard definition (see step 1.0 on illustration).
+- Must transmit to the vehicle the relevant V2G root-CA certificates, to be installed in it (see step 1.1). This could be done using a "V2G-Root-CA-TrustList" or individually, certificate per certificate.
 
 The vehicle:
 
-- Must receive and install the relevant V2G root-CA certificates in its Trust store to ensure a valid authentication of the trusted charging points, and of the trusted Signed contract certificate bundles (see step 1.1).
-- Must generate a key-pair, store it in its key-store (see step 1.2) and request a certificate generation based on this pair: the Provisioning Certificate. This certificate CN field must contain the PCID (see step 1.3).
+- Must receive and install the relevant V2G root-CA certificates in its "Trust store" to ensure a valid authentication of the trusted charging points, and of the trusted "Signed contract certificate bundles" (see step 1.1).
+- Must generate a key-pair, store it in its "key-store" (see step 1.2) and request a certificate generation based on this pair: the Provisioning Certificate. This certificate "CN" field must contain the PCiD (see step 1.3).
 
 The vehicle and the car-maker backend system:
 
@@ -170,8 +173,9 @@ The vehicle and the car-maker backend system:
 #### 5.3.2 The EV-User subscribes to an eMSP
 
 This step is not very impacted by the ISO-15118 and PlugCharge feature. There is no specific action related to these features. But this step is really important and mandatory because it generates the eMSP EV-user contract and its identifier eMAId (see 2.0 in the following illustration).
-
+- Generate the eMAId.
 ![EV-User subscribes to an eMSP](./images/media/image24.png)
+*Figure 6 - The EV-User subscribes to an eMSP*
 
 The eMSP backend system:
 
@@ -179,32 +183,35 @@ The eMSP backend system:
 
 #### 5.3.3 The EV-User activates the PlugCharge feature in its eMSP subscription, for its vehicle
 
-For the PlugCharge feature, the authentication verified for each session is based on a x509 certificate named Contract Certificate, which contains the eMAId identifier. The activation process must:
+For the Plug&Charge feature, the authentication verified for each session is based on a x509 certificate named "Contract Certificate", which contains the eMAId identifier. The activation process must:
 
 - Generate the contract certificate and the required associated data elements.
-- Package them in a contract certificate bundle.
+- Package them in a "contract certificate bundle".
 - Sign this bundle with a CPS entity attached to a V2G-RootCA.
 - Make the signed bundle available.
 
 ![EV-User activates PlugCharge](./images/media/image25.png)
+*Figure 7 - The EV-User activates the Plug&Charge feature in its eMSP subscription, for its vehicle.*
 
 The user asks his eMSP to activate the PlugCharge function for a given vehicle:
 
-- The user sends his vehicle PCID to his eMSP (see step 3.0).
+- The user sends his vehicle "PCiD" to his eMSP (see step 3.0).
 
 The eMSP system:
 
-- Must retrieve the vehicle Provisioning Certificate knowing the PCID (see step 3.1).
+- Must retrieve the vehicle Provisioning Certificate knowing the PCiD (see step 3.1).
 - Must generate the Contract Certificate (see step 3.2).
 - Must package the Contract certificate with additional data in a contract certificate bundle.
 - Must have this bundle signed by a CPS attached to a V2G-RootCA (see step 3.3).
-- Must make available the Signed Contract Certificate Bundle to the Car-Maker and to all CPOs by depositing it in a Contract Certificate Pool (see step 3.4).
+- Must make available the "Signed Contract Certificate Bundle" to the Car-Maker and to all CPOs by depositing it in a Contract Certificate Pool (see step 3.4).
 
 #### 5.3.4 The OEM/Car-maker installs the Contract certificate in the vehicle
 
-The contract certificate must be transferred to the vehicle for installation. This can be done via the OEM's back-end system, or via the charging point. We describe below the situation in which the Contract Certificate is transferred via the OEM's back-end system.
+The contract certificate must be transferred to the vehicle for installation. This can be done via the OEM's back-end system, or via the charging point.
+We describe below the situation in which the Contract Certificate is transferred via the OEM's back-end system.
 
 ![OEM installs contract certificate in vehicle](./images/media/image26.png)
+*Figure 8 - The OEM/Car-maker installs the Contract certificate in the vehicle*
 
 The OEM's backend system:
 
@@ -227,6 +234,7 @@ If the vehicle presents a valid Contract Certificate to the Charging Point, the 
 If the vehicle has no valid Contract Certificate to be presented to the Charging Point, the Charging Point will try to get one and to transfer it to the vehicle.
 
 ![EV-User plugs vehicle on charging point](./images/media/image27.png)
+*Figure 9 - The EV-User plugs its ISO-15118-ready vehicle on an ISO-15118-ready charging point*
 
 The vehicle:
 
@@ -239,16 +247,16 @@ The Charging Station:
 
 The CPO backend system:
 
-- Retrieves the available Contract Certificates Bundle (if any) for this vehicle/PCID (see step 5.3).
+- Retrieves the available "Contract Certificates Bundle" (if any) for this vehicle/PCiD (see step 5.3).
 - Sends it back to the Charging Station (see step 5.4).
 
 The Charging Station:
 
-- Pushes the Contract Certificate Bundle to the vehicle (see step 5.5).
+- Pushes the "Contract Certificate Bundle" to the vehicle (see step 5.5).
 
 The vehicle:
 
-- Must receive the Contract Certificate Bundle, unwrap, verify, and install it. The vehicle now contains the Contract Certificate. At this step, the vehicle can present a valid Contract Certificate to the Charging Point. The authentication process, and then the authorization process can be performed, and the charging session can start if the authorization is OK.
+- Must receive the "Contract Certificate Bundle", unwrap, verify, and install it. The vehicle now contains the "Contract Certificate". At this step, the vehicle can present a valid "Contract Certificate" to the Charging Point. The authentication process, and then the authorization process can be performed, and the charging session can start if the authorization is OK.
 
 #### 5.3.6 The CPO prepares an ISO-15118-ready Charging Station
 
