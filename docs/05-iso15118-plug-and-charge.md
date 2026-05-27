@@ -8,7 +8,7 @@ ISO-15118 *"Road vehicles -- Vehicle to grid communication interface"* is an int
 
 The standard describes a secure connection between electric vehicles and charging stations. This V2G-Datalink has been designed to provide the messages and data exchanges needed to implement several use cases, including Charging Process, Authentication and authorization, and Smart-charging and V2G.
 
-![ISO-15118 overview](./images/media/image17.png)
+![ISO-15118 overview](./images/media/image18.png)
 
 This document is focused on the establishment of the V2G-Datalink and the PlugCharge authentication and authorization use-cases. There are two versions of ISO-15118: the -2 released in 2014 and the -20 released in 2022. This document is based on the -2 version but the main differences of -20 are described and highlighted.
 
@@ -53,7 +53,7 @@ The principal steps in this process are as follows:
   - the CPO → Charging Station → Vehicle path. Or
   - the OEM-back-end → Vehicle path.
 
-![ISO-15118 and Plug Charge ecosystem](./images/media/image18.png)
+![ISO-15118 and Plug Charge ecosystem](./images/media/image19.png)
 
 All these actors, transmission means, and processes form the ISO-15118 and Plug Charge ecosystem.
 
@@ -61,7 +61,7 @@ All these actors, transmission means, and processes form the ISO-15118 and Plug 
 
 The following table summarizes the main characteristics of the certificates involved in ISO-15118 and PlugCharge.
 
-![ISO-15118 Certificates Summary table](./images/media/image19.png)
+![ISO-15118 Certificates Summary table](./images/media/image20.png)
 
 *Table 1 — ISO-15118 Certificates — Summary*
 
@@ -70,7 +70,7 @@ The following table summarizes the main characteristics of the certificates invo
 
 ### 5.2 Roles and actors
 
-![Roles and actors diagram](./images/media/image20.png)
+![Roles and actors diagram](./images/media/image21.png)
 
 The main actor roles involved are:
 
@@ -142,7 +142,7 @@ The main use cases are as follows:
 5. The EV-User plugs its ISO-15118-ready vehicle on an ISO-15118-ready charging point
 6. The CPO prepares an ISO-15118-ready Charging Station
 
-![Main use-cases overview](./images/media/image21.png)
+![Main use-cases overview](./images/media/image22.png)
 
 #### 5.3.1 The OEM/Car-maker produces an ISO-15118-ready vehicle
 
@@ -151,7 +151,7 @@ An ISO-15118 Plug Charge ready vehicle must have some specific hardware and soft
 - Install the relevant V2G root-certificates in the vehicle.
 - Generate the provisioning certificate of the vehicle and make it available.
 
-![OEM produces ISO-15118-ready vehicle](./images/media/image22.png)
+![OEM produces ISO-15118-ready vehicle](./images/media/image23.png)
 
 The car-maker backend system:
 
@@ -171,7 +171,7 @@ The vehicle and the car-maker backend system:
 
 This step is not very impacted by the ISO-15118 and PlugCharge feature. There is no specific action related to these features. But this step is really important and mandatory because it generates the eMSP EV-user contract and its identifier eMAId (see 2.0 in the following illustration).
 
-![EV-User subscribes to an eMSP](./images/media/image23.png)
+![EV-User subscribes to an eMSP](./images/media/image24.png)
 
 The eMSP backend system:
 
@@ -186,7 +186,7 @@ For the PlugCharge feature, the authentication verified for each session is base
 - Sign this bundle with a CPS entity attached to a V2G-RootCA.
 - Make the signed bundle available.
 
-![EV-User activates PlugCharge](./images/media/image24.png)
+![EV-User activates PlugCharge](./images/media/image25.png)
 
 The user asks his eMSP to activate the PlugCharge function for a given vehicle:
 
@@ -204,7 +204,7 @@ The eMSP system:
 
 The contract certificate must be transferred to the vehicle for installation. This can be done via the OEM's back-end system, or via the charging point. We describe below the situation in which the Contract Certificate is transferred via the OEM's back-end system.
 
-![OEM installs contract certificate in vehicle](./images/media/image25.png)
+![OEM installs contract certificate in vehicle](./images/media/image26.png)
 
 The OEM's backend system:
 
@@ -226,7 +226,7 @@ If the vehicle presents a valid Contract Certificate to the Charging Point, the 
 
 If the vehicle has no valid Contract Certificate to be presented to the Charging Point, the Charging Point will try to get one and to transfer it to the vehicle.
 
-![EV-User plugs vehicle on charging point](./images/media/image26.png)
+![EV-User plugs vehicle on charging point](./images/media/image27.png)
 
 The vehicle:
 
@@ -257,7 +257,7 @@ A Charging Station compliant with ISO-15118 must have a Certificate for each SEC
 - Generate the SECC certificate.
 - Install the certificate in the SECC.
 
-![CPO prepares ISO-15118-ready Charging Station](./images/media/image27.png)
+![CPO prepares ISO-15118-ready Charging Station](./images/media/image28.png)
 
 The CPO backend system:
 
