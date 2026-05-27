@@ -389,9 +389,9 @@ This is the workflow of installing a contract certificate on a vehicle via the E
 
 In the context of this use-case, the CPO system has to get the valid contract certificate from the CCP before sending it to the charging station. The PNCP service for this feature is [Get SCCBs by Certificate-Installation-Request](https://gireve-apis.stoplight.io/docs/pncp/m3c3u5t2098hj-get-scc-bs-by-certificate-installation-request).
 
-> ***Note:** This service can be used as well by OEM when they handle the contract certificate in their vehicles themselves.*
+> **📝 Note:** This service can be used as well by OEM when they handle the contract certificate in their vehicles themselves.
 
-> ***Note 2:** A summary at the end of this section recapitulates the most important information about this service.*
+> **📝 Note 2:** A summary at the end of this section recapitulates the most important information about this service.
 
 #### Input and Output Parameters Description
 
@@ -559,7 +559,7 @@ Gireve provides several services from the PNCP protocol that perform one, multip
 
 #### 3.7.1.1 Creation of a contract certificate and a contract certificate bundle
 
-> **Note:** The actions "Generate a new Key Pair" (step 1) and "Create Contract Certificate Bundle" (step 3) must be performed by the same actor. The creation of the CCB requires the possession of the Contract Certificate private key and this private key must never circulate unencrypted and outside the specific installation workflows defined in the ISO-15118 standard.
+> **📝 Note:** The actions "Generate a new Key Pair" (step 1) and "Create Contract Certificate Bundle" (step 3) must be performed by the same actor. The creation of the CCB requires the possession of the Contract Certificate private key and this private key must never circulate unencrypted and outside the specific installation workflows defined in the ISO-15118 standard.
 
 ##### 3.7.1.1.1 Option 1 – Gireve generates the CC key pair and the CCB
 
@@ -569,7 +569,7 @@ The eMSP must simply here specify the eMAId (E-Mobility Account Identifier) that
 
 The eMSP may also choose to specify a specific `certificateprofile` that determines exactly which SuBCA2 will issue the Contract Certificate, the validity period of that certificate and how the Subject DN of that certificate will be set (see [Section 3.3.1](#certificates-profiles-definition-and-usage) on certificate profiles). This parameter is optional. If not set, the default `certificateprofile` configured for this operator during the technical onboarding will be used.
 
-> **Note:** These two services also allow eMSP to add optional `metadata` object in the request body when creating or renewing the CC and associated CCB. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.12](#metadata-usage-for-emsps).
+> **📝 Note:** These two services also allow eMSP to add optional `metadata` object in the request body when creating or renewing the CC and associated CCB. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.12](#metadata-usage-for-emsps).
 
 ##### 3.7.1.1.2 Option 2 – The eMSP generates the CC key pair and the CCB
 
@@ -589,9 +589,9 @@ As an RCP, Gireve offers a PNCP service to retrieve the OEM Root Certificates. I
 
 The eMSP can then create the Contract Certificate Bundle using the public key of the Provisioning Certificate.
 
-> **Note:** Once the bundle has been generated, the eMSP must remove the unencrypted private key from its system for security reasons and delete it from any storage.
+> **📝 Note:** Once the bundle has been generated, the eMSP must remove the unencrypted private key from its system for security reasons and delete it from any storage.
 
-> **Note 2:** The unencrypted private key must never be logged or traced.
+> **📝 Note 2:** The unencrypted private key must never be logged or traced.
 
 #### <span id="Signingthecontract" class="anchor"></span>3.7.1.2 Signing the contract certificate bundle
 
@@ -620,7 +620,7 @@ If the eMSP delegates to Gireve the creation of the contract certificate key pai
 
 If the eMSP used Gireve certificates enrolment services, [Enroll a certificate PNCP](https://gireve-apis.stoplight.io/docs/pncp/afc0baf98a6e1-enroll-a-certificate-pncp) or [Enroll a certificate EST protocol](https://gireve-apis.stoplight.io/docs/pncp/7dd53d389f659-enroll-a-certificate-est-protocol), to obtain its Contract Certificates (meaning it generates itself the key pair and creates itself the bundle), it can use the same enrolment services for its certificate renewal as described in [Section 3.3.3](#renewal-of-a-leaf-certificate).
 
-> **Note:** As explained in [Section 3.7.1.1.1](#option-1-gireve-generates-the-cc-key-pair-and-the-ccb) and [Section 3.3.3](#renewal-of-a-leaf-certificate), these PNCP services allow the eMSP to include an optional `metadata` object in the request body when renewing a leaf certificate. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.3](#consultation-of-enrolled-Contract-Certificate).
+> **📝 Note:** As explained in [Section 3.7.1.1.1](#option-1-gireve-generates-the-cc-key-pair-and-the-ccb) and [Section 3.3.3](#renewal-of-a-leaf-certificate), these PNCP services allow the eMSP to include an optional `metadata` object in the request body when renewing a leaf certificate. This metadata enables the association of simple business classification data with the created certificate record in Gireve systems. It is not embedded in the certificate itself. This metadata can then be used to simplify reporting, filtering, and internal monitoring. For more information, see [Section 3.7.3](#consultation-of-enrolled-Contract-Certificate).
 
 ### 3.7.3 Consultation of enrolled Contract Certificate
 
@@ -650,9 +650,9 @@ In this case, the eMSP used either the [Create CC, build sign the CCB and store 
 
 To revoke a contract certificate issued this way the eMSP must call either [Revoke a CC](https://gireve-apis.stoplight.io/docs/pncp/fxqkvxwoijkv8-revoke-a-cc) or [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id). The first service will target a specific Contract Certificate identified by the pair serial number (in decimal value) and Issuer DN, the second service will target all Contract Certificates linked to the requesting eMSP and associated to the eMAId set in the request parameter. All targeted contract certificates are first revoked by the Certificate Authority that issued them. Then the eventual SCCBs containing these now revoked contract certificates are deleted from Gireve's CCP.
 
-> **Note:** After a revocation the CA needs to update its CRL and add the new revoked certificate. This update is done periodically (every few hours up to a day). Therefore, if you revoke a certificate and immediately check the revocation status with an OCSP call or by downloading the CRL, the certificate will still be displayed as valid until the CRL is updated.
+> **📝 Note:** After a revocation the CA needs to update its CRL and add the new revoked certificate. This update is done periodically (every few hours up to a day). Therefore, if you revoke a certificate and immediately check the revocation status with an OCSP call or by downloading the CRL, the certificate will still be displayed as valid until the CRL is updated.
 
-> **Note 2:** Services [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/k1cwhljgcbw3z-revoke-a-certificate) and [Act revocation of a CC in CCP](https://gireve-apis.stoplight.io/docs/pncp/rkknin0bix89l-act-revocation-of-a-cc-in-ccp) are to be specifically applied on Contract Certificates issued by the generic enrolment services (see section below). If called in this case the request will be rejected.
+> **📝 Note 2:** Services [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/k1cwhljgcbw3z-revoke-a-certificate) and [Act revocation of a CC in CCP](https://gireve-apis.stoplight.io/docs/pncp/rkknin0bix89l-act-revocation-of-a-cc-in-ccp) are to be specifically applied on Contract Certificates issued by the generic enrolment services (see section below). If called in this case the request will be rejected.
 
 #### 3.7.5.2 Option 2 – The eMSP generated the CC key pair and the certificate bundle
 
@@ -664,9 +664,9 @@ In this case, the service to use to revoke a Contract Certificate is [Revoke a c
 
 After revoking a contract certificate, to act this revocation, meaning to remove all the SCCB from Gireve CCP that are linked to a revoked certificate, the eMSP must call either [Act revocation of a CC in CCP](https://gireve-apis.stoplight.io/docs/pncp/rkknin0bix89l-act-revocation-of-a-cc-in-ccp) or [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id). The first service will target a specific Contract Certificate identified by the pair serial number (in decimal value) and Issuer DN, the second service will target all Contract Certificates linked to the requesting eMSP and associated to the eMAId set in the request parameter.
 
-> **Note:** The [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id) service will not also handle the revocation of the targeted CCs as described in the previous workflow where Gireve generated the CC and the bundle itself. It is essential to call the [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/rs5onohqhyyi2-revoke-a-certificate) service on that certificate beforehand.
+> **📝 Note:** The [Deactivate an eMAId](https://gireve-apis.stoplight.io/docs/pncp/ea6ea0c1989ac-deactivate-an-e-ma-id) service will not also handle the revocation of the targeted CCs as described in the previous workflow where Gireve generated the CC and the bundle itself. It is essential to call the [Revoke a certificate](https://gireve-apis.stoplight.io/docs/pncp/rs5onohqhyyi2-revoke-a-certificate) service on that certificate beforehand.
 
-> **Note 2:** Service [Revoke a CC](https://gireve-apis.stoplight.io/docs/pncp/fxqkvxwoijkv8-revoke-a-cc) is to be specifically applied in the previous workflow where Gireve generated the CC and the bundle itself. If called in this case the request will be rejecte
+> **📝 Note 2:** Service [Revoke a CC](https://gireve-apis.stoplight.io/docs/pncp/fxqkvxwoijkv8-revoke-a-cc) is to be specifically applied in the previous workflow where Gireve generated the CC and the bundle itself. If called in this case the request will be rejecte
 
 ### 3.7.6 Making the eMSP Root certificate available in an RCP
 
@@ -686,9 +686,9 @@ If the eMSP generates the contract certificate bundle itself and does not delega
 
 As a PCP, Gireve presents the PNCP service [Get PC by PCID](https://gireve-apis.stoplight.io/docs/pncp/yemwrjvxxsjoj-get-pc-by-pcid) that will take as param input a PCID and return the full provisioning certificate linked to that PCID including its certificate chain.
 
-> **Note:** Gireve's PCP only return active provisioning certificate. Meaning they are not expired or revoked.
+> **📝 Note:** Gireve's PCP only return active provisioning certificate. Meaning they are not expired or revoked.
 
-> **Note 2:** If multiple active PCs share the same PCID (in case of a PC renew during the transition period), Gireve PCP will send back the most recent version of the PC.
+> **📝 Note 2:** If multiple active PCs share the same PCID (in case of a PC renew during the transition period), Gireve PCP will send back the most recent version of the PC.
 
 ### 3.7.8 Check an OEM PC from a PCID
 
@@ -841,7 +841,7 @@ The OEM must include in the request:
 - The ISO-15118 version
 - The list of V2G Root certificates that are trusted by the EV
 
-> **Note:** The parameter `oldpcid` has to be specified only for updating a PC already included in Gireve PCP. The explanations on that process are detailed in the next section. We consider here that this parameter is not set by the requester.
+> **📝 Note:** The parameter `oldpcid` has to be specified only for updating a PC already included in Gireve PCP. The explanations on that process are detailed in the next section. We consider here that this parameter is not set by the requester.
 
 The Provisioning Certificate and the SubCAs must be passed in Base64 PEM format without headers or line breaks. The SubCAs need to be ordered in the list from lowest certificate authority to highest certificate authority.
 
@@ -878,7 +878,7 @@ After revoking an OEM Provisioning Certificate, the OEM must remove that PC from
 
 This service will target the Provisioning Certificate by identifying it with the serial number (in decimal value) and Issuer DN set in the request.
 
-> **Note:** Gireve does not check the revocation status of the Provisioning Certificate before performing the actions in the [Act revocation of a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/9631ac36e5e6a-act-revocation-of-a-pc-in-pcp) service. If the OEM has not revoked the Provisioning Certificate before and calls, the PC will be removed from Gireve PCP and the linked SCCBs will be deactivated from Gireve CCP anyway.
+> **📝 Note:** Gireve does not check the revocation status of the Provisioning Certificate before performing the actions in the [Act revocation of a PC in PCP](https://gireve-apis.stoplight.io/docs/pncp/9631ac36e5e6a-act-revocation-of-a-pc-in-pcp) service. If the OEM has not revoked the Provisioning Certificate before and calls, the PC will be removed from Gireve PCP and the linked SCCBs will be deactivated from Gireve CCP anyway.
 
 #### 3.8.3.4 Removing a provisioning certificate in Gireve PCP
 
@@ -888,7 +888,7 @@ Furthermore, the deletion of a Provisioning Certificate in Gireve's PCP with [De
 
 The PCID set as input parameter targets which PC to remove from Gireve PCP. Most of the time, a PCID targets exactly one PC. However, particularly in the case of a PC renewal, a PCID may target more than one active PC. For this reason, optional parameters `serial_number` (decimal format) and `issuer_dn` can also be set to ensure targeting exactly the right PC.
 
-> **Note:** If only the PCID is set as an input parameter and that PCID matches multiple valid PCs associated with that operator, all targeted PCs will be deleted from Gireve PCP.
+> **📝 Note:** If only the PCID is set as an input parameter and that PCID matches multiple valid PCs associated with that operator, all targeted PCs will be deleted from Gireve PCP.
 
 ### 3.8.4 Make an OEM Root available in Gireve RCP
 
