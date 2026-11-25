@@ -4,15 +4,17 @@ This repository contains a public, version-controlled implementation guide for t
 
 PNCP is an open protocol that defines how an operator's software platform interacts with a PKI ecosystem service provider to enable Plug & Charge services, including PKI services, V2G Root CA management, Certificate Provisioning Services and certificate pools.
 
-It is intended to support the secure deployment of **ISO 15118 Plug & Charge** across the EV charging ecosystem.
+It is intended to support the secure deployment of **ISO 15118 Plug & Charge** across the EV charging ecosystem. 
+> [!NOTE]
+> **All PNCP services are compatible with the versions ISO 15118-2 and ISO 15118-20 of the standard.**
 
 The guide is primarily intended for technical teams — system administrators, developers, architects and project managers — integrating their systems with Gireve's Trust Platform via PNCP.
 
 Readers should already be familiar with:
 
 * PKI and digital certificates;
-* the basic principles of ISO 15118-2.
-
+* the basic principles of ISO 15118-2 and/or ISO 15118-20, depending on the version(s) they implement.
+  
 Knowledge of OCPI is useful but not required.
 
 ---
@@ -149,7 +151,7 @@ Background information for readers who need an introduction or refresher on PKI 
 
 ---
 
-### 5. [ISO 15118-2 and Plug & Charge](docs/05-iso15118-plug-and-charge.md)
+### 5. [ISO 15118 and Plug & Charge](docs/05-iso15118-plug-and-charge.md)
 
 Background information on ISO 15118 and the Plug & Charge ecosystem.
 
