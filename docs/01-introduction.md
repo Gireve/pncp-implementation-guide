@@ -19,7 +19,7 @@ This document is intended for technical teams (system administrators, developers
 To be able to follow the indications and suggestions given in this implementation guide, it is necessary to have a correct understanding of:
 
 1. PKI and digital certificates.  
-2. The basic principles of the ISO‑15118‑2 standard.  
+2. The basic principles of the ISO‑15118 standards (ISO 15118-2 and ISO 15118-20).  
 
 Appendix 1 and Appendix 2 at the end of the guide cover the essential information needed on these two points. Knowledge of the OCPI protocol is useful but not essential; OCPI documentation is available at <https://github.com/ocpi/ocpi>.
 
